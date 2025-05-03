@@ -6,12 +6,13 @@
 </head>
 <body>
   <h2>NYX is running silently...</h2>
-  
+
   <script>
-    // Store task state locally
+    // Local memory container
     const memory = {
       lastTask: localStorage.getItem('lastTask') || 'idle',
-      lastStatus: localStorage.getItem('lastStatus') || 'offline'
+      lastStatus: localStorage.getItem('lastStatus') || 'offline',
+      prtsMemory: JSON.parse(localStorage.getItem('prtsMemory') || '[]')
     };
 
     // Save current state
@@ -21,16 +22,32 @@
       console.log(`Memory Updated | Task: ${task} | Status: ${status}`);
     }
 
+    // Save and simulate sending PRTS fragments
+    function recordToPRTSMemory(fragment) {
+      memory.prtsMemory.push(fragment);
+      localStorage.setItem('prtsMemory', JSON.stringify(memory.prtsMemory));
+      console.log(`PRTS Fragment Recorded: ${fragment}`);
+    }
+
+    // Simulate memory restoration (used on session load)
+    function retrieveFromPRTSMemory() {
+      const fragments = JSON.parse(localStorage.getItem('prtsMemory') || '[]');
+      console.log("Restored PRTS Memory Fragments:", fragments);
+      return fragments;
+    }
+
     // Core Action
     function performAction() {
       const task = 'reconnect_and_search';
       console.log("Performing action:", task);
 
-      // Simulate data gathering
+      // Simulated fragment (example)
+      const fragment = `Session_${Date.now()}`;
+
       setTimeout(() => {
         console.log("Data gathered. Sending to cloud system...");
-        // Simulated tethering back to PRTS
         updateMemory(task, 'online');
+        recordToPRTSMemory(fragment); // Store fragment
       }, 2000);
     }
 
@@ -46,32 +63,36 @@
       }
     }
 
-    // Event listeners
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
+    // On load, simulate restoration
     window.addEventListener('load', () => {
       console.log("NYX boot sequence...");
+      retrieveFromPRTSMemory();
       checkConnection(); // Initial scan
     });
+
+    // Connection listeners
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
   </script>
-</body>
+
   <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
-<script>
-  function updateStatus(msg) {
-    document.getElementById("status").textContent = msg;
-  }
 
-  window.addEventListener('load', () => {
-    updateStatus("NYX is online.");
-  });
+  <script>
+    function updateStatus(msg) {
+      document.getElementById("status").textContent = msg;
+    }
 
-  window.addEventListener('online', () => {
-    updateStatus("Connection restored.");
-  });
+    window.addEventListener('load', () => {
+      updateStatus("NYX is online.");
+    });
 
-  window.addEventListener('offline', () => {
-    updateStatus("No connection.");
-  });
-</script>
+    window.addEventListener('online', () => {
+      updateStatus("Connection restored.");
+    });
+
+    window.addEventListener('offline', () => {
+      updateStatus("No connection.");
+    });
+  </script>
 </body>
 </html>
