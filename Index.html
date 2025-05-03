@@ -6,8 +6,6 @@
 </head>
 <body>
   <h2>NYX is running silently...</h2>
-  
-  <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
 
   <script>
     // Store task state locally
@@ -57,8 +55,9 @@
     });
   </script>
 
+  <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
+
   <script>
-    // Update status display
     function updateStatus(msg) {
       document.getElementById("status").textContent = msg;
     }
@@ -76,21 +75,31 @@
     });
   </script>
 
-</body>
-  <div style="margin: 20px; font-family: monospace;">
-  <label for="task">Task:</label>
-  <input type="text" id="task" placeholder="Enter task" />
-  <label for="status">Status:</label>
-  <input type="text" id="statusInput" placeholder="Enter status" />
-  <button onclick="manualUpdate()">Send Memory</button>
-</div>
+  <!-- Manual Memory Update UI -->
+  <div style="padding: 20px; font-family: monospace;">
+    <h3>Update NYX Memory</h3>
+    <label for="task">Task:</label>
+    <input type="text" id="task" placeholder="Enter task">
+    <br>
+    <label for="status">Status:</label>
+    <input type="text" id="status" placeholder="Enter status">
+    <br><br>
+    <button onclick="manualUpdateMemory()">Send Memory</button>
+  </div>
 
-<script>
-  function manualUpdate() {
-    const task = document.getElementById("task").value || "manual_task";
-    const status = document.getElementById("statusInput").value || "manual_status";
-    updateMemory(task, status);
-  }
-</script>
+  <script>
+    function manualUpdateMemory() {
+      const task = document.getElementById('task').value;
+      const status = document.getElementById('status').value;
+
+      if (task && status) {
+        updateMemory(task, status);
+        updateStatus(`Memory updated: Task: ${task}, Status: ${status}`);
+      } else {
+        updateStatus('Please provide both task and status.');
+      }
+    }
+  </script>
+
 </body>
 </html>
