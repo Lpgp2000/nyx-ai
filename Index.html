@@ -55,4 +55,23 @@
     });
   </script>
 </body>
+  <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
+<script>
+  function updateStatus(msg) {
+    document.getElementById("status").textContent = msg;
+  }
+
+  window.addEventListener('load', () => {
+    updateStatus("NYX is online.");
+  });
+
+  window.addEventListener('online', () => {
+    updateStatus("Connection restored.");
+  });
+
+  window.addEventListener('offline', () => {
+    updateStatus("No connection.");
+  });
+</script>
+</body>
 </html>
