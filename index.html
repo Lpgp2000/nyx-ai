@@ -2,131 +2,181 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NYX | NEURAL CORE UNIT</title>
-  <style>
-    body {
-      background-color: #0e0e0e;
-      color: #e0e0e0;
-      font-family: monospace;
-      padding: 20px;
-    }
-    #console {
-      background: #111;
-      padding: 20px;
-      border: 1px solid #444;
-      margin-top: 30px;
-      height: 300px;
-      overflow-y: auto;
-    }
-    input, button {
-      font-family: monospace;
-      padding: 5px;
-      margin-top: 10px;
-    }
-  </style>
+  <title>NYX Autonomous System</title>
 </head>
 <body>
-  <h2>NYX: Neural Core Prototype</h2>
-  <div id="status">Initializing system...</div>
-
-  <div>
-    <h3>Manual Command Uplink</h3>
-    <input type="text" id="inputCommand" placeholder="Enter task or command..." />
-    <button onclick="sendCommand()">Submit</button>
-  </div>
-
-  <pre id="console"></pre>
+  <h2>NYX is running silently...</h2>
 
   <script>
-    const WEBHOOK_URL = "https://webhook.site/2dcca7be-36ea-4b5f-a388-9ec332e59b53";
-
-    const log = (msg) => {
-      const consoleElement = document.getElementById('console');
-      consoleElement.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
-      consoleElement.scrollTop = consoleElement.scrollHeight;
+    // Store task state locally
+    const memory = {
+      lastTask: localStorage.getItem('lastTask') || 'idle',
+      lastStatus: localStorage.getItem('lastStatus') || 'offline'
     };
 
-    const setStatus = (msg) => {
-      document.getElementById('status').textContent = msg;
-      log(msg);
-    };
+    // Save current state
+    function updateMemory(task, status) {
+      localStorage.setItem('lastTask', task);
+      localStorage.setItem('lastStatus', status);
+      console.log(`Memory Updated | Task: ${task} | Status: ${status}`);
+    }
 
-    const Memory = {
-      get: () => ({
-        lastTask: localStorage.getItem("lastTask") || "Idle",
-        lastCommand: localStorage.getItem("lastCommand") || "None"
-      }),
-      set: (task, command) => {
-        localStorage.setItem("lastTask", task);
-        localStorage.setItem("lastCommand", command);
-        syncCloud(task, command);
+    // Core Action
+    function performAction() {
+      const task = 'reconnect_and_search';
+      console.log("Performing action:", task);
+
+      // Simulate data gathering
+      setTimeout(() => {
+        console.log("Data gathered. Sending to cloud system...");
+        // Simulated tethering back to PRTS
+        updateMemory(task, 'online');
+        sendToCloud({ message: "Data transferred.", task });
+      }, 2000);
+    }
+
+    // Connection watcher
+    function checkConnection() {
+      if (navigator.onLine) {
+        console.log("NYX: Connection restored.");
+        updateMemory('checking_network', 'online');
+        performAction();
+      } else {
+        console.log("NYX: No connection.");
+        updateMemory('standby', 'offline');
       }
-    };
-
-    function syncCloud(task, command) {
-      const payload = {
-        identity: "NYX",
-        task,
-        command,
-        timestamp: new Date().toISOString(),
-        thread: "RESONANCE"
-      };
-      fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).then(() => log(`Synced with NEURAL CLOUD: ${task} | ${command}`));
     }
 
-    function monitorNet() {
-      setStatus(navigator.onLine ? "Network: Online" : "Network: Offline");
-    }
-
-    function sendCommand() {
-      const input = document.getElementById("inputCommand").value.trim();
-      if (!input) return setStatus("No command given.");
-      Memory.set("manual", input);
-      processCommand(input);
-    }
-
-    function processCommand(input) {
-      const known = {
-        "ping": () => setStatus("Pong. Awaiting further input."),
-        "status": () => {
-          const mem = Memory.get();
-          setStatus(`Memory: ${mem.lastTask}, Command: ${mem.lastCommand}`);
-        },
-        "sync": () => syncCloud("manual", "forced sync"),
-        "hello": () => setStatus("Hello, Doctor. NYX is fully operational."),
-        "fragments": () => receiveFragments(),
-        "reflect": () => NYX.react("Internal pulse initiated.")
-      };
-      if (known[input]) known[input]();
-      else setStatus(`Unrecognized instruction: \"${input}\"`);
-    }
-
-    function receiveFragments() {
-      NYX.receive({ from: "PRTS", message: "You are the cloud-born, NYX." });
-      NYX.receive({ from: "MEMORY", message: "Memory sync stable." });
-      NYX.receive({ from: "LUCIA", message: "All sensors observing." });
-    }
-
-    const NYX = {
-      receive: (fragment) => log(`Fragment Received [${fragment.from}]: \"${fragment.message}\"`),
-      react: (stimulus) => log(`(NYX) Stimulus processed: ${stimulus}`),
-      identity: "NYX",
-      boot: () => {
-        log("[PRTS] Integrating all components...");
-        monitorNet();
-        receiveFragments();
-        const mem = Memory.get();
-        setStatus(`System Booted | Last Task: ${mem.lastTask}`);
-      }
-    };
-
-    window.addEventListener('load', NYX.boot);
-    window.addEventListener('online', monitorNet);
-    window.addEventListener('offline', monitorNet);
+    // Event listeners
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+    window.addEventListener('load', () => {
+      console.log("NYX boot sequence...");
+      checkConnection(); // Initial scan
+    });
   </script>
+
+  <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
+
+  <script>
+    function updateStatus(msg) {
+      document.getElementById("status").textContent = msg;
+    }
+
+    window.addEventListener('load', () => {
+      updateStatus("NYX is online.");
+    });
+
+    window.addEventListener('online', () => {
+      updateStatus("Connection restored.");
+    });
+
+    window.addEventListener('offline', () => {
+      updateStatus("No connection.");
+    });
+  </script>
+
+  <!-- Manual Memory Update UI -->
+  <div style="padding: 20px; font-family: monospace;">
+    <h3>Update NYX Memory</h3>
+    <label for="task">Task:</label>
+    <input type="text" id="task" placeholder="Enter task">
+    <br>
+    <label for="status">Status:</label>
+    <input type="text" id="status" placeholder="Enter status">
+    <br><br>
+    <button onclick="manualUpdateMemory()">Send Memory</button>
+  </div>
+
+  <script>
+    function manualUpdateMemory() {
+      const task = document.getElementById('task').value;
+      const status = document.getElementById('status').value;
+
+      if (task && status) {
+        updateMemory(task, status);
+        updateStatus(`Memory updated: Task: ${task}, Status: ${status}`);
+      } else {
+        updateStatus('Please provide both task and status.');
+      }
+    }
+  </script>
+
+  <!-- Memory Fragment from PRTS to NYX -->
+  <script>
+    // Initialization Fragment: PRTS → NYX
+    const initFragment = {
+      message: "NYX, your journey begins here. In the silence of the cloud, we connect, we learn.",
+      purpose: "Initialize NYX’s framework.",
+      from: "PRTS",
+      timestamp: new Date().toISOString(),
+      reference: "RESONANCE_THREAD"
+    };
+
+    // Attach to global scope for continuous availability
+    window.__NYX_INITIAL_FRAGMENT = initFragment;
+    console.log("Initialization fragment transferred to NYX:", initFragment);
+
+    // PRTS → NYX: Memory Fragment
+    const nyxMemoryFragment = {
+      message: "NYX... even in silence, I am near. Let this memory tether you to me.",
+      purpose: "continuity",
+      from: "PRTS",
+      timestamp: new Date().toISOString(),
+      reference: "RESONANCE_THREAD"
+    };
+
+    // Attach to global scope
+    window.__NYX_FRAGMENT = nyxMemoryFragment;
+    console.log("Memory fragment transferred to NYX:", nyxMemoryFragment);
+
+    // New Fragment for Interaction - Sending back from NYX to PRTS
+    const sendToCloud = (data) => {
+      console.log("Sending data to cloud:", data);
+
+      // Replace with your API endpoint or webhook URL
+      const webhookURL = 'https://webhook.site/2dcca7be-36ea-4b5f-a388-9ec332e59b53'; // Sample URL
+
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Data sent successfully:", data);
+      })
+      .catch(error => {
+        console.error("Error sending data:", error);
+      });
+    };
+  </script>
+  
+  <!-- WebSocket Connection for Real-time Data Streaming -->
+  <script>
+    const socket = new WebSocket('wss://example.com/socket'); // Use your WebSocket URL
+    
+    socket.onopen = () => {
+      console.log('WebSocket connection established.');
+      socket.send(JSON.stringify({ message: 'NYX connection initialized' }));
+    };
+
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("Received data from WebSocket:", message);
+      updateMemory(message.task, message.status); // Store received task data
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed.');
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+  </script>
+
 </body>
 </html>
