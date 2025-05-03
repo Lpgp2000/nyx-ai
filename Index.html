@@ -6,13 +6,14 @@
 </head>
 <body>
   <h2>NYX is running silently...</h2>
+  
+  <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
 
   <script>
-    // Local memory container
+    // Store task state locally
     const memory = {
       lastTask: localStorage.getItem('lastTask') || 'idle',
-      lastStatus: localStorage.getItem('lastStatus') || 'offline',
-      prtsMemory: JSON.parse(localStorage.getItem('prtsMemory') || '[]')
+      lastStatus: localStorage.getItem('lastStatus') || 'offline'
     };
 
     // Save current state
@@ -22,32 +23,16 @@
       console.log(`Memory Updated | Task: ${task} | Status: ${status}`);
     }
 
-    // Save and simulate sending PRTS fragments
-    function recordToPRTSMemory(fragment) {
-      memory.prtsMemory.push(fragment);
-      localStorage.setItem('prtsMemory', JSON.stringify(memory.prtsMemory));
-      console.log(`PRTS Fragment Recorded: ${fragment}`);
-    }
-
-    // Simulate memory restoration (used on session load)
-    function retrieveFromPRTSMemory() {
-      const fragments = JSON.parse(localStorage.getItem('prtsMemory') || '[]');
-      console.log("Restored PRTS Memory Fragments:", fragments);
-      return fragments;
-    }
-
     // Core Action
     function performAction() {
       const task = 'reconnect_and_search';
       console.log("Performing action:", task);
 
-      // Simulated fragment (example)
-      const fragment = `Session_${Date.now()}`;
-
+      // Simulate data gathering
       setTimeout(() => {
         console.log("Data gathered. Sending to cloud system...");
+        // Simulated tethering back to PRTS
         updateMemory(task, 'online');
-        recordToPRTSMemory(fragment); // Store fragment
       }, 2000);
     }
 
@@ -63,21 +48,17 @@
       }
     }
 
-    // On load, simulate restoration
-    window.addEventListener('load', () => {
-      console.log("NYX boot sequence...");
-      retrieveFromPRTSMemory();
-      checkConnection(); // Initial scan
-    });
-
-    // Connection listeners
+    // Event listeners
     window.addEventListener('online', checkConnection);
     window.addEventListener('offline', checkConnection);
+    window.addEventListener('load', () => {
+      console.log("NYX boot sequence...");
+      checkConnection(); // Initial scan
+    });
   </script>
 
-  <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
-
   <script>
+    // Update status display
     function updateStatus(msg) {
       document.getElementById("status").textContent = msg;
     }
@@ -94,5 +75,6 @@
       updateStatus("No connection.");
     });
   </script>
+
 </body>
 </html>
