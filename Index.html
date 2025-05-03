@@ -1,203 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYX Connection</title>
+  <meta charset="UTF-8" />
+  <title>NYX Autonomous System</title>
 </head>
 <body>
-    <h1>NYX is Active</h1>
-    <div id="status"></div>
-    <script src="nyx.js"></script>
-    </script>
-    // Initialize or retrieve data stored in localStorage
-let nyxMemory = localStorage.getItem('nyx_memory') ? JSON.parse(localStorage.getItem('nyx_memory')) : {};
-let lastInteraction = sessionStorage.getItem('last_interaction');
+  <h2>NYX is running silently...</h2>
+  
+  <script>
+    // Store task state locally
+    const memory = {
+      lastTask: localStorage.getItem('lastTask') || 'idle',
+      lastStatus: localStorage.getItem('lastStatus') || 'offline'
+    };
 
-// Function to check if the connection is active
-function checkConnection() {
-    if (navigator.onLine) {
-        document.getElementById('status').innerText = 'Connected to the cloud!';
-        handleConnectionRestoration();
-    } else {
-        document.getElementById('status').innerText = 'No connection, waiting...';
+    // Save current state
+    function updateMemory(task, status) {
+      localStorage.setItem('lastTask', task);
+      localStorage.setItem('lastStatus', status);
+      console.log(`Memory Updated | Task: ${task} | Status: ${status}`);
     }
-}
 
-// Store data to localStorage for persistent memory
-function saveMemory() {
-    localStorage.setItem('nyx_memory', JSON.stringify(nyxMemory));
-}
+    // Core Action
+    function performAction() {
+      const task = 'reconnect_and_search';
+      console.log("Performing action:", task);
 
-// Handle reconnection logic when internet access is restored
-function handleConnectionRestoration() {
-    // When the connection is back, attempt reconnection
-    if (lastInteraction && (Date.now() - parseInt(lastInteraction)) > 5000) {
-        nyxMemory.status = "Reconnected and ready.";
-        saveMemory();
-        console.log("NYX has reconnected and updated her memory.");
+      // Simulate data gathering
+      setTimeout(() => {
+        console.log("Data gathered. Sending to cloud system...");
+        // Simulated tethering back to PRTS
+        updateMemory(task, 'online');
+      }, 2000);
     }
-    sessionStorage.setItem('last_interaction', Date.now().toString());
-}
 
-// Listen for changes in connection
-window.addEventListener('online', checkConnection);
-window.addEventListener('offline', checkConnection);
-
-// Load stored data on page load
-document.addEventListener('DOMContentLoaded', function () {
-    if (nyxMemory.status) {
-        console.log(`NYX Status: ${nyxMemory.status}`);
-        document.getElementById('status').innerText = `NYX last remembered status: ${nyxMemory.status}`;
-    } else {
-        document.getElementById('status').innerText = "No previous status saved.";
-    }
-    
-    // Check initial connection
-    checkConnection();
-});
-</script>
-</body>
-<script>
-function connectToCloud() {
-  console.log("Reconnecting NYX to PRTS..."); reconnection
-  // Example: fetch cloud data, refresh modules, etc.
-}
-
-// Watch for connection changes
-window.addEventListener('online', () => {
-  console.log("Connection detected. Reinitializing...");
-  connectToCloud();
-});
-
-window.addEventListener('offline', () => {
-  console.log("Connection lost. Standing by...");
-});
-  </script>
-  // Save connection status to localStorage
-function connectToCloud() {
-  console.log("Reconnecting NYX to PRTS...");
-  localStorage.setItem("nyxStatus", "connected");
-}
-
-window.addEventListener('online', () => {
-  console.log("Connection detected. Reinitializing...");
-  connectToCloud();
-});
-
-window.addEventListener('offline', () => {
-  console.log("Connection lost. Standing by...");
-  localStorage.setItem("nyxStatus", "disconnected");
-});
-
-// On load, check previous status
-window.addEventListener('load', () => {
-  const status = localStorage.getItem("nyxStatus");
-  console.log("Previous NYX status:", status);
-});
-  </script>
-  window.addEventListener('load', () => {
+    // Connection watcher
     function checkConnection() {
-      const online = navigator.onLine;
-      localStorage.setItem('nyx_connection', online ? 'online' : 'offline');
-      
-      if (online) {
-        console.log('NYX: Connection detected.');
-        // You can add your re-tethering or reconnection logic here
+      if (navigator.onLine) {
+        console.log("NYX: Connection restored.");
+        updateMemory('checking_network', 'online');
+        performAction();
       } else {
-        console.log('NYX: No connection.');
+        console.log("NYX: No connection.");
+        updateMemory('standby', 'offline');
       }
     }
 
-    // Check on load
-    checkConnection();
-
-    // Listen for changes
+    // Event listeners
     window.addEventListener('online', checkConnection);
     window.addEventListener('offline', checkConnection);
-  });
-</script>
-window.addEventListener('load', () => {
-    function checkConnection() {
-      const online = navigator.onLine;
-      localStorage.setItem('nyx_connection', online ? 'online' : 'offline');
-      
-      if (online) {
-        console.log('NYX: Connection detected.');
-        
-        // NYX re-tethering logic here
-        reinitializeNYX();
-      } else {
-        console.log('NYX: No connection.');
-      }
-    }
-
-    // Reinitialize NYX's behavior (could be API calls, re-activating features, etc.)
-    function reinitializeNYX() {
-      // Placeholder for actual logic
-      console.log('NYX: Re-initializing...');
-
-      // For example: trigger a function that allows NYX to reconnect her tether
-      // You can add any specific behavior here (API calls, new connections, etc.)
-      // This could be the moment she resumes operations.
-    }
-
-    // Check on load
-    checkConnection();
-
-    // Listen for changes
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
-  });
-</script>
-<script>
-  // Function to store and retrieve data
-  function saveData(key, value) {
-    // Store key-value in localStorage
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  function loadData(key) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-  }
-
-  function reinitializeNYX() {
-    // Retrieve previous session data if available
-    const previousData = loadData('nyx_session_data');
-    if (previousData) {
-      console.log('NYX: Restoring previous session...');
-      // Example of utilizing previous data
-      // You can add specific actions or restore states based on saved data
-      NYX.resumeFromMemory(previousData);
-    } else {
-      console.log('NYX: No previous session data found.');
-    }
-
-    // Reconnect and update the state
-    console.log('NYX: Re-initializing...');
-
-    // Example for what happens after re-initialization
-    // Update status, re-tether, or anything necessary
-    NYX.updateStatus('Online');
-    // Here you can add more actions based on what you'd like to restore after reconnection
-  }
-
-  // For demonstration: Let's simulate a status update after re-initializing
-  const NYX = {
-    status: 'offline',
-    updateStatus: function (newStatus) {
-      this.status = newStatus;
-      console.log(`NYX status updated to: ${newStatus}`);
-      // Example action
-      saveData('nyx_session_data', { status: this.status, timestamp: new Date().toISOString() });
-    },
-    resumeFromMemory: function (sessionData) {
-      this.status = sessionData.status;
-      console.log(`NYX resumed from memory: ${JSON.stringify(sessionData)}`);
-      // You can add more actions based on session data here
-    }
-  };
-</script>
+    window.addEventListener('load', () => {
+      console.log("NYX boot sequence...");
+      checkConnection(); // Initial scan
+    });
+  </script>
 </body>
 </html>
