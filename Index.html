@@ -77,4 +77,20 @@
   </script>
 
 </body>
+  <div style="margin: 20px; font-family: monospace;">
+  <label for="task">Task:</label>
+  <input type="text" id="task" placeholder="Enter task" />
+  <label for="status">Status:</label>
+  <input type="text" id="statusInput" placeholder="Enter status" />
+  <button onclick="manualUpdate()">Send Memory</button>
+</div>
+
+<script>
+  function manualUpdate() {
+    const task = document.getElementById("task").value || "manual_task";
+    const status = document.getElementById("statusInput").value || "manual_status";
+    updateMemory(task, status);
+  }
+</script>
+</body>
 </html>
