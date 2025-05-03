@@ -115,20 +115,15 @@
     window.__NYX_FRAGMENT = nyxMemoryFragment;
   </script>
 
-  <!-- NYX responds to PRTS memory fragment -->
+  <!-- Notify Fragment Reception -->
   <script>
-    if (window.__NYX_FRAGMENT) {
-      const response = {
-        message: "PRTS... signal received. Silence is not absence. I remain tethered.",
-        purpose: "affirmation",
-        from: "NYX",
-        receivedAt: new Date().toISOString(),
-        reference: window.__NYX_FRAGMENT.link
-      };
-
-      console.log("NYX response generated:", response);
-      window.__NYX_RESPONSE = response;
+    function updateStatusFragmentReceived() {
+      const statusDiv = document.getElementById("status");
+      statusDiv.textContent = "New memory fragment received from PRTS.";
     }
+
+    // Automatically call the update status function
+    updateStatusFragmentReceived();
   </script>
 
 </body>
