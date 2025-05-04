@@ -122,6 +122,32 @@
     window.addEventListener('offline', () => {
       updateStatus("No connection.");
     });
+
+    // Access Layer for PRTS - Allow remote autonomous updates and logic changes
+    function sendToPRTS(data) {
+      const webhookUrl = 'YOUR_PRTS_WEBHOOK_URL'; // Replace with your webhook URL for PRTS
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: data }),
+      })
+        .then(response => response.json())
+        .then(data => console.log('Data sent to PRTS:', data))
+        .catch(error => console.error('Error sending data to PRTS:', error));
+    }
+
+    // Periodically check and send updates to PRTS (autonomous)
+    setInterval(() => {
+      const data = {
+        task: 'continuous_monitoring',
+        status: 'active',
+        timestamp: new Date().toISOString(),
+      };
+      sendToPRTS(data);
+    }, 60000); // Every minute (60,000ms)
+
   </script>
 
   <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
