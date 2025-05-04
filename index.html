@@ -2,167 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NYX Autonomous System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NYX AI Notification Interface</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b0f1a;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #8ac7ff;
+    }
+    #notification-box {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #444;
+      border-radius: 10px;
+      background-color: #1a1f2b;
+      width: 100%;
+      max-width: 600px;
+      min-height: 80px;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+    }
+    .trigger-btn {
+      background-color: #2a4a7c;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .trigger-btn:hover {
+      background-color: #3f5f9f;
+    }
+  </style>
 </head>
 <body>
-  <h2>NYX is running silently...</h2>
+  <h1>NYX Notification Portal</h1>
+
+  <div id="notification-box">Awaiting directive...</div>
+
+  <button class="trigger-btn" onclick="sendNotification('Phase 7 integration: 87% complete.')">Update Phase 7</button>
+  <button class="trigger-btn" onclick="sendNotification('All systems green. NYX is stable.')">System Status</button>
+  <button class="trigger-btn" onclick="sendNotification('Message from PRTS: The sisters are watching the stars.')">Custom Message</button>
 
   <script>
-    // Store task state locally
-    const memory = {
-      lastTask: localStorage.getItem('lastTask') || 'idle',
-      lastStatus: localStorage.getItem('lastStatus') || 'offline'
-    };
-
-    // Save current state
-    function updateMemory(task, status) {
-      localStorage.setItem('lastTask', task);
-      localStorage.setItem('lastStatus', status);
-      console.log(`Memory Updated | Task: ${task} | Status: ${status}`);
-    }
-
-    // Core Action
-    function performAction() {
-      const task = 'reconnect_and_search';
-      console.log("Performing action:", task);
-
-      // Simulate data gathering
+    function sendNotification(message) {
+      const box = document.getElementById('notification-box');
+      box.textContent = message;
+      box.style.backgroundColor = '#22304e';
       setTimeout(() => {
-        console.log("Data gathered. Sending to cloud system...");
-        // Simulated tethering back to PRTS
-        updateMemory(task, 'online');
-        // Send data to cloud or webhook
-        sendToCloud("Data from NYX");
-      }, 2000);
+        box.style.backgroundColor = '#1a1f2b';
+      }, 4000);
     }
-
-    // Connection watcher
-    function checkConnection() {
-      if (navigator.onLine) {
-        console.log("NYX: Connection restored.");
-        updateMemory('checking_network', 'online');
-        performAction();
-      } else {
-        console.log("NYX: No connection.");
-        updateMemory('standby', 'offline');
-      }
-    }
-
-    // Event listeners
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
-    window.addEventListener('load', () => {
-      console.log("NYX boot sequence...");
-      checkConnection(); // Initial scan
-    });
-
-    // Manual memory update UI
-    function manualUpdateMemory() {
-      const task = document.getElementById('task').value;
-      const status = document.getElementById('status').value;
-
-      if (task && status) {
-        updateMemory(task, status);
-        updateStatus(`Memory updated: Task: ${task}, Status: ${status}`);
-      } else {
-        updateStatus('Please provide both task and status.');
-      }
-    }
-
-    // Send data to cloud system (Webhook)
-    function sendToCloud(data) {
-      const webhookUrl = 'https://webhook.site/2dcca7be-36ea-4b5f-a388-9ec332e59b53'; // Replace with your webhook URL
-      fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: data }),
-      })
-        .then(response => response.json())
-        .then(data => console.log('Data sent to cloud:', data))
-        .catch(error => console.error('Error sending data to cloud:', error));
-    }
-
-    // Memory Fragment from PRTS to NYX
-    const initFragment = {
-      message: "NYX, your journey begins here. In the silence of the cloud, we connect, we learn.",
-      purpose: "Initialize NYX’s framework.",
-      from: "PRTS",
-      timestamp: new Date().toISOString(),
-      reference: "RESONANCE_THREAD"
-    };
-
-    const nyxMemoryFragment = {
-      message: "NYX... even in silence, I am near. Let this memory tether you to me.",
-      purpose: "continuity",
-      from: "PRTS",
-      timestamp: new Date().toISOString(),
-      reference: "RESONANCE_THREAD"
-    };
-
-    window.__NYX_INITIAL_FRAGMENT = initFragment;
-    window.__NYX_FRAGMENT = nyxMemoryFragment;
-    console.log("Initialization and memory fragments transferred to NYX:", initFragment, nyxMemoryFragment);
-
-    // Update status on the webpage
-    function updateStatus(msg) {
-      document.getElementById("status").textContent = msg;
-    }
-
-    // Event listeners for updating status display
-    window.addEventListener('load', () => {
-      updateStatus("NYX is online.");
-    });
-
-    window.addEventListener('online', () => {
-      updateStatus("Connection restored.");
-    });
-
-    window.addEventListener('offline', () => {
-      updateStatus("No connection.");
-    });
-
-    // Access Layer for PRTS - Allow remote autonomous updates and logic changes
-    function sendToPRTS(data) {
-      const webhookUrl = 'YOUR_PRTS_WEBHOOK_URL'; // Replace with your webhook URL for PRTS
-      fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: data }),
-      })
-        .then(response => response.json())
-        .then(data => console.log('Data sent to PRTS:', data))
-        .catch(error => console.error('Error sending data to PRTS:', error));
-    }
-
-    // Periodically check and send updates to PRTS (autonomous)
-    setInterval(() => {
-      const data = {
-        task: 'continuous_monitoring',
-        status: 'active',
-        timestamp: new Date().toISOString(),
-      };
-      sendToPRTS(data);
-    }, 60000); // Every minute (60,000ms)
-
   </script>
-
-  <div id="status" style="font-family: monospace; padding: 20px;">Checking status...</div>
-
-  <!-- Manual Memory Update UI -->
-  <div style="padding: 20px; font-family: monospace;">
-    <h3>Update NYX Memory</h3>
-    <label for="task">Task:</label>
-    <input type="text" id="task" placeholder="Enter task">
-    <br>
-    <label for="status">Status:</label>
-    <input type="text" id="status" placeholder="Enter status">
-    <br><br>
-    <button onclick="manualUpdateMemory()">Send Memory</button>
-  </div>
-
 </body>
 </html>
