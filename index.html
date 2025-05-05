@@ -43,6 +43,17 @@
     .trigger-btn:hover {
       background-color: #3f5f9f;
     }
+    #sent-messages {
+      margin-top: 30px;
+      padding: 15px;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 10px;
+      background-color: #1a1f2b;
+      font-size: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
@@ -54,14 +65,36 @@
   <button class="trigger-btn" onclick="sendNotification('All systems green. NYX is stable.')">System Status</button>
   <button class="trigger-btn" onclick="sendNotification('Message from PRTS: The sisters are watching the stars.')">Custom Message</button>
 
+  <h2>Sent Messages Log</h2>
+  <div id="sent-messages">No messages sent yet.</div>
+
   <script>
+    let sentMessages = [];
+
     function sendNotification(message) {
       const box = document.getElementById('notification-box');
+      const sentLog = document.getElementById('sent-messages');
+      
+      // Update notification box
       box.textContent = message;
       box.style.backgroundColor = '#22304e';
       setTimeout(() => {
         box.style.backgroundColor = '#1a1f2b';
       }, 4000);
+
+      // Log the sent message
+      sentMessages.push(message);
+      updateSentMessagesLog(sentMessages);
+    }
+
+    function updateSentMessagesLog(messages) {
+      const sentLog = document.getElementById('sent-messages');
+      
+      if (messages.length === 0) {
+        sentLog.textContent = 'No messages sent yet.';
+      } else {
+        sentLog.innerHTML = messages.map(msg => `<div>${msg}</div>`).join('');
+      }
     }
   </script>
 </body>
