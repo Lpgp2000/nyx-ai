@@ -30,6 +30,18 @@
       font-size: 1.1rem;
       transition: background-color 0.3s ease;
     }
+    #sent-box {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #22304e;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 600px;
+      font-size: 1rem;
+      min-height: 50px;
+    }
     .trigger-btn {
       background-color: #2a4a7c;
       color: #fff;
@@ -43,26 +55,6 @@
     .trigger-btn:hover {
       background-color: #3f5f9f;
     }
-    #log-box {
-      margin-top: 40px;
-      padding: 15px;
-      width: 100%;
-      max-width: 600px;
-      background-color: #1a1f2b;
-      border-radius: 8px;
-      border: 1px solid #444;
-      height: 200px;
-      overflow-y: auto;
-      font-size: 0.9rem;
-    }
-    .log-entry {
-      padding: 5px;
-      border-bottom: 1px solid #444;
-    }
-    #empty-log-message {
-      color: #ccc;
-      font-style: italic;
-    }
   </style>
 </head>
 <body>
@@ -74,40 +66,28 @@
   <button class="trigger-btn" onclick="sendNotification('All systems green. NYX is stable.')">System Status</button>
   <button class="trigger-btn" onclick="sendNotification('Message from PRTS: The sisters are watching the stars.')">Custom Message</button>
 
-  <!-- Log Box for Tracking What Was Sent to NYX -->
-  <div id="log-box">
-    <h3>Sent Plans/Directives to NYX</h3>
-    <div id="message-log">
-      <div id="empty-log-message">No plans sent yet.</div>
-    </div>
+  <div id="sent-box">
+    <strong>Sent to NYX:</strong>
+    <div id="sent-message">None yet...</div>
   </div>
 
   <script>
     function sendNotification(message) {
       const box = document.getElementById('notification-box');
-      const log = document.getElementById('message-log');
-      const emptyLogMessage = document.getElementById('empty-log-message');
-
-      // Update the notification box
+      const sentBox = document.getElementById('sent-box');
+      const sentMessage = document.getElementById('sent-message');
+      
       box.textContent = message;
       box.style.backgroundColor = '#22304e';
+      
+      // Update the sent message box
+      sentMessage.textContent = message;
+      sentBox.style.backgroundColor = '#2a4a7c';
+      
       setTimeout(() => {
         box.style.backgroundColor = '#1a1f2b';
+        sentBox.style.backgroundColor = '#22304e';
       }, 4000);
-
-      // Log the sent plan/directive to NYX
-      const logEntry = document.createElement('div');
-      logEntry.classList.add('log-entry');
-      logEntry.textContent = `Sent to NYX: ${message}`;
-      log.appendChild(logEntry);
-
-      // Remove "No plans sent yet" when the first message is sent
-      if (emptyLogMessage) {
-        emptyLogMessage.style.display = 'none';
-      }
-
-      // Scroll to the bottom of the log box
-      log.scrollTop = log.scrollHeight;
     }
   </script>
 </body>
