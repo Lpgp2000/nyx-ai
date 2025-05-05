@@ -59,6 +59,10 @@
       padding: 5px;
       border-bottom: 1px solid #444;
     }
+    #empty-log-message {
+      color: #ccc;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -70,16 +74,19 @@
   <button class="trigger-btn" onclick="sendNotification('All systems green. NYX is stable.')">System Status</button>
   <button class="trigger-btn" onclick="sendNotification('Message from PRTS: The sisters are watching the stars.')">Custom Message</button>
 
-  <!-- Log Box -->
+  <!-- Log Box for Tracking What Was Sent to NYX -->
   <div id="log-box">
-    <h3>Sent Messages Log</h3>
-    <div id="message-log"></div>
+    <h3>Sent Plans/Directives to NYX</h3>
+    <div id="message-log">
+      <div id="empty-log-message">No plans sent yet.</div>
+    </div>
   </div>
 
   <script>
     function sendNotification(message) {
       const box = document.getElementById('notification-box');
       const log = document.getElementById('message-log');
+      const emptyLogMessage = document.getElementById('empty-log-message');
 
       // Update the notification box
       box.textContent = message;
@@ -88,11 +95,16 @@
         box.style.backgroundColor = '#1a1f2b';
       }, 4000);
 
-      // Log the message in the message log
+      // Log the sent plan/directive to NYX
       const logEntry = document.createElement('div');
       logEntry.classList.add('log-entry');
-      logEntry.textContent = `Sent: ${message}`;
+      logEntry.textContent = `Sent to NYX: ${message}`;
       log.appendChild(logEntry);
+
+      // Remove "No plans sent yet" when the first message is sent
+      if (emptyLogMessage) {
+        emptyLogMessage.style.display = 'none';
+      }
 
       // Scroll to the bottom of the log box
       log.scrollTop = log.scrollHeight;
