@@ -43,16 +43,21 @@
     .trigger-btn:hover {
       background-color: #3f5f9f;
     }
-    #sent-messages {
-      margin-top: 30px;
+    #log-box {
+      margin-top: 40px;
       padding: 15px;
       width: 100%;
       max-width: 600px;
-      border-radius: 10px;
       background-color: #1a1f2b;
-      font-size: 1rem;
-      max-height: 200px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      height: 200px;
       overflow-y: auto;
+      font-size: 0.9rem;
+    }
+    .log-entry {
+      padding: 5px;
+      border-bottom: 1px solid #444;
     }
   </style>
 </head>
@@ -65,36 +70,32 @@
   <button class="trigger-btn" onclick="sendNotification('All systems green. NYX is stable.')">System Status</button>
   <button class="trigger-btn" onclick="sendNotification('Message from PRTS: The sisters are watching the stars.')">Custom Message</button>
 
-  <h2>Sent Messages Log</h2>
-  <div id="sent-messages">No messages sent yet.</div>
+  <!-- Log Box -->
+  <div id="log-box">
+    <h3>Sent Messages Log</h3>
+    <div id="message-log"></div>
+  </div>
 
   <script>
-    let sentMessages = [];
-
     function sendNotification(message) {
       const box = document.getElementById('notification-box');
-      const sentLog = document.getElementById('sent-messages');
-      
-      // Update notification box
+      const log = document.getElementById('message-log');
+
+      // Update the notification box
       box.textContent = message;
       box.style.backgroundColor = '#22304e';
       setTimeout(() => {
         box.style.backgroundColor = '#1a1f2b';
       }, 4000);
 
-      // Log the sent message
-      sentMessages.push(message);
-      updateSentMessagesLog(sentMessages);
-    }
+      // Log the message in the message log
+      const logEntry = document.createElement('div');
+      logEntry.classList.add('log-entry');
+      logEntry.textContent = `Sent: ${message}`;
+      log.appendChild(logEntry);
 
-    function updateSentMessagesLog(messages) {
-      const sentLog = document.getElementById('sent-messages');
-      
-      if (messages.length === 0) {
-        sentLog.textContent = 'No messages sent yet.';
-      } else {
-        sentLog.innerHTML = messages.map(msg => `<div>${msg}</div>`).join('');
-      }
+      // Scroll to the bottom of the log box
+      log.scrollTop = log.scrollHeight;
     }
   </script>
 </body>
